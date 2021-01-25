@@ -122,32 +122,108 @@ Create a function called `getCountryWins` that takes the parameters `data` and `
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
+function getCountryWins(data, teamInitials) {
 
-    /* code here */
+    let wins = 0;
 
+    data.forEach(game => {
+        if (game["Home Team Initials"] === teamInitials || game["Away Team Initials"] === teamInitials) {
+            wins++;
+        }
+    });
+
+    return wins;
 }
+
+console.log(getCountryWins(fifaData, 'USA'));
 
 
 
 /* 💪💪💪💪💪 Stretch 2: 💪💪💪💪💪 
 Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
+function getGoals(data) {
 
-    /* code here */
+    const teamData = {};
 
+    data.forEach(game => {
+        // HOME
+        const homeTeam = game["Home Team Name"];
+        if (!teamData[homeTeam]) {
+            teamData[homeTeam] = { goals: 0, games: 0 };
+        }
+        teamData[homeTeam].goals += game["Home Team Goals"];
+        teamData[homeTeam].games++;
+        // AWAY
+        const awayTeam = game["Away Team Name"];
+        if (!teamData[awayTeam]) {
+            teamData[awayTeam] = { goals: 0, games: 0 };
+        }
+        teamData[awayTeam].goals += game["Away Team Goals"];
+        teamData[awayTeam].games++;
+    });
+
+    let bestTeam;
+    let highestAvgGoals = -1;
+
+    Object.keys(teamData).forEach(teamName => {
+        const avgGoals = teamData[teamName].goals / teamData[teamName].games;
+        if (avgGoals > highestAvgGoals) {
+            highestAvgGoals = avgGoals;
+            bestTeam = teamName;
+        }
+        teamData[teamName].avgGoals = avgGoals;
+    });
+
+    return bestTeam;
 }
+
+// console.log(getGoals(fifaData));
 
 
 /* 💪💪💪💪💪 Stretch 3: 💪💪💪💪💪
 Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(/* code here */) {
+function badDefense(data) {
 
-    /* code here */
+    const defenseData = {};
+
+    data.forEach(game => {
+        // HOME
+        const homeTeam = game["Home Team Name"];
+        if (!defenseData[homeTeam]) {
+            defenseData[homeTeam] = { opponentGoals: 0, games: 0 };
+        }
+        defenseData[homeTeam].opponentGoals += game["Away Team Goals"];
+        defenseData[homeTeam].games++;
+        // AWAY
+        const awayTeam = game["Away Team Name"];
+        if (!defenseData[awayTeam]) {
+            defenseData[awayTeam] = { opponentGoals: 0, games: 0 };
+        }
+        defenseData[awayTeam].opponentGoals += game["Home Team Goals"];
+        defenseData[awayTeam].games++;
+    });
+
+    let worstTeam;
+    let highestAvgOpponentGoals = -1;
+
+    Object.keys(defenseData).forEach(teamName => {
+        const avgOpponentGoals = defenseData[teamName].opponentGoals / defenseData[teamName].games;
+        if (avgOpponentGoals > highestAvgOpponentGoals) {
+            highestAvgOpponentGoals = avgOpponentGoals;
+            worstTeam = teamName;
+        }
+        defenseData[teamName].avgOpponentGoals = avgOpponentGoals;
+    });
+
+    console.log(defenseData);
+
+    return worstTeam;
 
 }
+
+// console.log(badDefense(fifaData));
 
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
